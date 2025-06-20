@@ -5,31 +5,29 @@
 ---
 
 ## 📜 Project Summary
-CropSense AI is a machine learning–driven plant disease detection system tailored for smallholder farmers in Rwanda. Every year, local farmers lose up to 30% of crop yields due to undiagnosed diseases and pest attacks. CropSense aims to solve this by empowering farmers with a mobile tool that uses computer vision to diagnose plant diseases from images — even offline, using low-end smartphones.
+CropSense AI is a machine learning–driven plant disease detection system tailored for smallholder farmers in Rwanda. Every year, local farmers lose up to 30% of crop yields due to undiagnosed diseases and pest attacks. CropSense empowers farmers with a mobile tool that uses computer vision to diagnose plant diseases from images — even offline, using low-end smartphones.
 
-The project is built on a plant image classification model trained on the **PlantVillage** dataset and optimized for performance in low-resource environments. Our goal is to support Rwanda’s Vision 2050 goals for digital agriculture and food security.
+The project uses the **PlantVillage** dataset and multiple classification models (CNN and VGG16 + Logistic Regression) to identify crop diseases effectively.
 
 ---
 
 ## 🚜 Motivation & Problem
-Despite agriculture employing over 70% of Rwandans, many farmers cannot access expert support in time to diagnose crop issues. Extension officer shortages, limited internet access, and non-local AI models have all contributed to poor crop protection.
+Although over 70% of Rwandans work in agriculture, most lack access to timely expert advice. The shortage of extension officers, limited connectivity, and generalized AI tools are major barriers.
 
-CropSense addresses this by:
-- Using locally relevant image data (PlantVillage)
-- Running completely offline on entry-level Android phones
-- Supporting multiple crops and disease classes
-- Empowering youth and farmers to co-create a more resilient agricultural system
+CropSense solves this by:
+- Using a publicly available, diverse plant disease dataset
+- Providing offline detection using optimized models
+- Targeting low-end Android smartphones
+- Supporting multiple disease categories across major crops
 
 ---
 
 ## 📂 Dataset Summary
 - **Source:** TensorFlow Datasets → [`plant_village`](https://www.tensorflow.org/datasets/catalog/plant_village)
-- **Classes:** 38+ crop disease classes (e.g., Tomato mosaic virus, Potato early blight, etc.)
-- **Type:** Image classification dataset
-- **Size:** 54,000+ images
-- **Format:** Color images resized to 64x64 pixels
-- **Usage:** Train, validation split (80% / 20%)
-- **Preprocessing:** Normalized pixel values, augmented via Keras pipelines
+- **Classes:** 38+ crop disease classes (e.g., Tomato Early Blight, Apple Scab, Potato Late Blight)
+- **Images:** ~54,000 color images
+- **Preprocessing:** Normalized, resized to 64x64 pixels
+- **Split:** 80% training, 20% validation
 
 ---
 
@@ -37,38 +35,34 @@ CropSense addresses this by:
 
 | Instance | Model                    | Optimizer | Regularization | Epochs | Early Stopping | Layers           | Learning Rate | Accuracy | F1 Score | Recall | Precision | Loss   |
 |----------|--------------------------|-----------|----------------|--------|----------------|------------------|----------------|----------|----------|--------|-----------|--------|
-| 1        | CNN                      | Adam      | None           | 10     | No             | 2 Conv + Dense   | 0.001          | 0.8300   | 0.8200   | 0.8300 | 0.8200    | 0.6417 |
-| 2        | CNN                      | RMSprop   | L2             | 10     | Yes            | 3 Conv + Dense   | 0.0005         | 0.8700   | 0.8600   | 0.8700 | 0.8600    | 0.5200 |
-| 3        | CNN                      | Adam      | L1             | 10     | Yes            | 4 Conv + Dense   | 0.0003         | 0.8800   | 0.8700   | 0.8800 | 0.8700    | 0.4900 |
-| 4        | CNN                      | RMSprop   | L1_L2          | 10     | No             | 3 Conv + Dense   | 0.0007         | 0.8500   | 0.8400   | 0.8500 | 0.8400    | 0.5100 |
-| 5        | VGG16 + Logistic Reg.    | N/A       | None           | N/A    | No             | 1 (LogReg Layer) | N/A            | **0.9610** | **0.9620** | **0.9700** | **0.9500**  | N/A    |
+| 1        | CNN                      | Adam      | None           | 10     | No             | 2 Conv + Dense   | 0.001          | **0.8915** | 0.8800   | 0.8800 | 0.8700    | 0.3900 |
+| 2        | CNN                      | Adam      | L1             | 15     | Yes            | 3 Conv + Dense   | 0.0001         | 0.4935   | 0.6609   | 0.9744 | 0.5000    | 5.2036 |
+| 3        | CNN                      | RMSprop   | L2             | 10     | Yes            | 3 Conv + Dense   | 0.0005         | 0.5584   | 0.2917   | 0.1795 | 0.7778    | 0.7839 |
+| 4        | CNN                      | RMSprop   | L1             | 15     | Yes            | 3 Conv + Dense   | 0.0001         | 0.5455   | 0.6847   | 0.9744 | 0.5278    | 5.0626 |
+| 5        | VGG16 + Logistic Reg.    | N/A       | None           | N/A    | No             | 1 (LogReg Layer) | N/A            | 0.7607   | 0.7500   | 0.7700 | 0.7400    | N/A    |
 
 ---
 
-## 🏆 Best Model: Instance 5 (VGG16 + Logistic Regression)
+## 🏆 Best Model: Instance 1 (CNN + Adam, No Regularization)
 
-- **Why it’s best:** Outperformed all CNN-based models in accuracy and generalization.
-- **Use case:** Lightweight, high-accuracy model for deployment on devices via saved `.pkl` or `.h5`.
+- **Why it's best:** Achieved the highest accuracy (89.15%) and a strong F1-score with minimal tuning.
+- **Characteristics:** Lightweight, efficient, and generalizable for real-world smartphone deployment.
+- **Saved as:** `saved_models/best_model.keras`
 
 ---
 
 ## 🧪 Evaluation Strategy
-All models were evaluated on the **same validation set** using:
+All models were evaluated on the same test set. Metrics used:
 - **Accuracy**
 - **F1 Score**
 - **Precision**
 - **Recall**
-- **Loss Curve**
-- **Confusion Matrix** (plotted using seaborn)
+- **Loss**
+- **Confusion Matrix** (via Seaborn)
 
 ---
 
 ## 🔮 Prediction Pipeline
-- Final predictions use the best saved model: `saved_models/best_model.pkl`
-- Logistic Regression fallback model included for offline inference
-- `make_predictions(model_path, images)` is included in the notebook to run new predictions
-
----
-
-## 📁 Folder Structure
-
+- Final predictions use the best model: `best_model.keras`
+- VGG16 + Logistic Regression version is also available as backup
+- Custom prediction function available in notebook
