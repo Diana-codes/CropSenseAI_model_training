@@ -47,7 +47,7 @@ CropSense solves this by:
 
 - **Why it's best:** Achieved the highest accuracy (89.15%) and a strong F1-score with minimal tuning.
 - **Characteristics:** Lightweight, efficient, and generalizable for real-world smartphone deployment.
-- **Saved as:** `saved_models/best_model.keras`
+- **Saved as:** `saved_models/best_model.pkl`
 
 ---
 
@@ -66,3 +66,12 @@ All models were evaluated on the same test set. Metrics used:
 - Final predictions use the best model: `best_model.keras`
 - VGG16 + Logistic Regression version is also available as backup
 - Custom prediction function available in notebook
+
+---
+
+## 📹 Demo Video
+
+Watch the project walkthrough here:  
+[![CropSense AI Demo](https://img.youtube.com/vi/1DAeerAHDew/0.jpg)](https://youtu.be/1DAeerAHDew?feature=shared)
+
+➡️ [Click to open on YouTube](https://youtu.be/1DAeerAHDew?feature=shared)
